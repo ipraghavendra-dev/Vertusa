@@ -239,7 +239,7 @@
           <div class="card-header" onclick="this.parentElement.classList.toggle('open'); loadDetail(${rec.id}, this.parentElement)">
             <span class="card-id">#${rec.id}</span>
             <span class="card-summary">
-              <strong>${rec.os} ${rec.browser || ""}</strong> — ${rec.device_type || ""}
+              <strong>${rec.form_name || 'Anonymous'}</strong> — ${rec.os} ${rec.browser || ""}
               — <strong>${loc}</strong>
             </span>
             <span class="card-time">${time}</span>
@@ -247,6 +247,10 @@
           </div>
           <div class="card-body" id="body-${rec.id}">
             <div class="info-grid">
+              ${infoItem("NAME", rec.form_name, "amber")}
+              ${infoItem("EMAIL", rec.form_email)}
+              ${infoItem("PHONE", rec.form_phone)}
+              ${infoItem("DOB", rec.form_dob)}
               ${infoItem("IP ADDRESS", rec.ip_address, "cyan")}
               ${infoItem("ISP", rec.ip_isp)}
               ${infoItem("ORG", rec.ip_org)}

