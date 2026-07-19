@@ -1,0 +1,16 @@
+{
+  "name": "info-gatherer",
+  "version": "1.0.0",
+  "description": "Information Gathering Application with auto metadata and camera capture",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "docx": "^9.7.1",
+    "express": "^4.21.0",
+    "node-fetch": "^2.7.0",
+    "sql.js": "^1.11.0"
+  }
+}

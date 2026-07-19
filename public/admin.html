@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS // Admin Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #020408; color: #e0e6f0;
+      min-height: 100vh; line-height: 1.5;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.05) 1px, transparent 1px);
+      background-size: 60px 60px; pointer-events: none; z-index: 0;
+    }
+
+    /* ── Login Gate ─── */
+    .login-gate {
+      position: fixed; inset: 0; z-index: 100;
+      background: #020408;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1.5rem;
+    }
+    .login-gate.hidden { display: none; }
+    .login-gate .hex { color: #00e5ff; font-size: 3rem; filter: drop-shadow(0 0 12px rgba(0,229,255,0.5)); }
+    .login-gate h1 { font-size: 1.4rem; letter-spacing: 0.1em; }
+    .login-gate h1 .dim { color: #4a5568; }
+    .login-gate input {
+      background: rgba(10,18,32,0.9); border: 1px solid rgba(0,229,255,0.2);
+      color: #00ff88; font-family: inherit; font-size: 1rem;
+      padding: 0.7rem 1.2rem; border-radius: 4px; width: 300px;
+      text-align: center; letter-spacing: 0.15em; outline: none;
+    }
+    .login-gate input:focus { border-color: rgba(0,255,136,0.4); box-shadow: 0 0 12px rgba(0,255,136,0.1); }
+    .login-gate input::placeholder { color: #4a5568; letter-spacing: 0.1em; }
+    .login-gate button {
+      background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.25);
+      color: #00ff88; font-family: inherit; font-size: 0.75rem;
+      padding: 0.5rem 2rem; border-radius: 4px; cursor: pointer;
+      letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.2s;
+    }
+    .login-gate button:hover { background: rgba(0,255,136,0.15); box-shadow: 0 0 12px rgba(0,255,136,0.15); }
+    .login-error { color: #ff3d3d; font-size: 0.7rem; letter-spacing: 0.08em; min-height: 1rem; }
+
+    /* ── Header ─── */
+    .admin-header {
+      position: relative; z-index: 1;
+      padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem;
+      border-bottom: 1px solid rgba(0,229,255,0.12);
+      background: rgba(6,10,18,0.95);
+    }
+    .admin-header .hex { color: #00e5ff; font-size: 1.4rem; filter: drop-shadow(0 0 8px rgba(0,229,255,0.5)); }
+    .admin-header h1 { font-size: 1rem; font-weight: 700; letter-spacing: 0.08em; }
+    .admin-header h1 .dim { color: #4a5568; }
+    .admin-header .count {
+      margin-left: auto; font-size: 0.65rem; padding: 3px 10px;
+      background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.15);
+      border-radius: 2px; color: #00ff88; letter-spacing: 0.06em;
+    }
+    .admin-header .refresh-btn {
+      background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.2);
+      color: #00e5ff; font-family: inherit; font-size: 0.65rem;
+      padding: 3px 12px; border-radius: 2px; cursor: pointer;
+      letter-spacing: 0.06em; text-transform: uppercase; transition: all 0.2s;
+    }
+    .admin-header .refresh-btn:hover { background: rgba(0,229,255,0.15); }
+
+    /* ── Content ─── */
+    .admin-content { position: relative; z-index: 1; padding: 1.5rem; }
+
+    /* ── Record Cards ─── */
+    .record-card {
+      background: rgba(8,14,26,0.85); border: 1px solid rgba(0,229,255,0.12);
+      border-radius: 6px; margin-bottom: 1.5rem; overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .record-card:hover { border-color: rgba(0,229,255,0.3); }
+
+    .card-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: rgba(0,229,255,0.03);
+      border-bottom: 1px solid rgba(0,229,255,0.08);
+      cursor: pointer;
+    }
+    .card-header:hover { background: rgba(0,229,255,0.06); }
+    .card-id {
+      font-size: 0.6rem; font-weight: 700; padding: 2px 8px;
+      background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.15);
+      border-radius: 2px; color: #00e5ff; letter-spacing: 0.06em;
+    }
+    .card-summary { font-size: 0.7rem; color: #8892a8; flex: 1; }
+    .card-summary strong { color: #00ff88; font-weight: 500; }
+    .card-time { font-size: 0.55rem; color: #4a5568; letter-spacing: 0.06em; }
+    .card-arrow { color: #4a5568; font-size: 0.8rem; transition: transform 0.2s; }
+    .record-card.open .card-arrow { transform: rotate(90deg); }
+
+    .card-body { display: none; padding: 1rem; }
+    .record-card.open .card-body { display: block; }
+
+    /* Data grid inside card */
+    .info-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.4rem; margin-bottom: 1rem;
+    }
+    .info-item {
+      padding: 0.4rem 0.6rem;
+      background: rgba(15,25,40,0.5); border: 1px solid rgba(0,229,255,0.06);
+      border-radius: 3px;
+    }
+    .info-item .label {
+      font-size: 0.45rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #4a5568; margin-bottom: 1px;
+    }
+    .info-item .value {
+      font-size: 0.7rem; color: #00ff88; word-break: break-all;
+    }
+    .info-item .value.cyan { color: #00e5ff; }
+    .info-item .value.amber { color: #ffb300; }
+
+    /* Media section */
+    .media-section {
+      margin-top: 1rem; padding-top: 1rem;
+      border-top: 1px solid rgba(0,229,255,0.08);
+    }
+    .media-title {
+      font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #8892a8; margin-bottom: 0.75rem;
+    }
+    .media-grid { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .media-grid img {
+      max-width: 280px; max-height: 220px; border-radius: 4px;
+      border: 1px solid rgba(0,229,255,0.15); object-fit: cover;
+    }
+    .media-grid audio {
+      width: 100%; max-width: 400px; height: 40px; margin-top: 0.5rem;
+    }
+    .no-media { font-size: 0.65rem; color: #4a5568; font-style: italic; }
+
+    /* Loading */
+    .loading {
+      text-align: center; padding: 3rem;
+      font-size: 0.8rem; color: #4a5568; letter-spacing: 0.1em;
+    }
+    .empty {
+      text-align: center; padding: 4rem;
+      font-size: 0.85rem; color: #4a5568; letter-spacing: 0.08em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ LOGIN GATE ═══ -->
+  <div class="login-gate" id="loginGate">
+    <div class="hex">⬡</div>
+    <h1>NEXUS<span class="dim">//</span>ADMIN</h1>
+    <input type="password" id="passInput" placeholder="ENTER ADMIN KEY" autofocus />
+    <button id="loginBtn">AUTHENTICATE</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+
+  <!-- ═══ ADMIN DASHBOARD ═══ -->
+  <div id="dashboard" style="display:none">
+    <header class="admin-header">
+      <span class="hex">⬡</span>
+      <h1>NEXUS<span class="dim">//</span>ADMIN CONSOLE</h1>
+      <span class="count" id="totalCount">RECORDS: —</span>
+      <button class="refresh-btn" id="refreshBtn">↻ REFRESH</button>
+    </header>
+    <div class="admin-content" id="adminContent">
+      <div class="loading">LOADING RECORDS…</div>
+    </div>
+  </div>
+
+  <script>
+    let adminPass = "";
+
+    // ── Login ──
+    document.getElementById("loginBtn").addEventListener("click", tryLogin);
+    document.getElementById("passInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") tryLogin();
+    });
+
+    async function tryLogin() {
+      const pass = document.getElementById("passInput").value.trim();
+      if (!pass) return;
+      try {
+        const res = await fetch("/api/admin/records?pass=" + encodeURIComponent(pass));
+        if (res.ok) {
+          adminPass = pass;
+          document.getElementById("loginGate").classList.add("hidden");
+          document.getElementById("dashboard").style.display = "block";
+          const data = await res.json();
+          renderRecords(data);
+        } else {
+          document.getElementById("loginError").textContent = "[ ✗ ] INVALID ADMIN KEY";
+        }
+      } catch {
+        document.getElementById("loginError").textContent = "[ ✗ ] CONNECTION FAILED";
+      }
+    }
+
+    // ── Refresh ──
+    document.getElementById("refreshBtn").addEventListener("click", async () => {
+      const content = document.getElementById("adminContent");
+      content.innerHTML = '<div class="loading">REFRESHING…</div>';
+      const res = await fetch("/api/admin/records?pass=" + encodeURIComponent(adminPass));
+      const data = await res.json();
+      renderRecords(data);
+    });
+
+    // ── Render record list ──
+    function renderRecords(data) {
+      const content = document.getElementById("adminContent");
+      document.getElementById("totalCount").textContent = `RECORDS: ${data.count}`;
+
+      if (!data.records || data.records.length === 0) {
+        content.innerHTML = '<div class="empty">NO CAPTURES YET</div>';
+        return;
+      }
+
+      content.innerHTML = "";
+      data.records.forEach((rec) => {
+        const card = document.createElement("div");
+        card.className = "record-card";
+
+        const loc = [rec.ip_city, rec.ip_region, rec.ip_country].filter(Boolean).join(", ") || "Unknown";
+        const time = rec.created_at || rec.timestamp_open || "—";
+
+        card.innerHTML = `
+          <div class="card-header" onclick="this.parentElement.classList.toggle('open'); loadDetail(${rec.id}, this.parentElement)">
+            <span class="card-id">#${rec.id}</span>
+            <span class="card-summary">
+              <strong>${rec.os} ${rec.browser || ""}</strong> — ${rec.device_type || ""}
+              — <strong>${loc}</strong>
+            </span>
+            <span class="card-time">${time}</span>
+            <span class="card-arrow">▸</span>
+          </div>
+          <div class="card-body" id="body-${rec.id}">
+            <div class="info-grid">
+              ${infoItem("IP ADDRESS", rec.ip_address, "cyan")}
+              ${infoItem("ISP", rec.ip_isp)}
+              ${infoItem("ORG", rec.ip_org)}
+              ${infoItem("CITY", rec.ip_city)}
+              ${infoItem("REGION", rec.ip_region)}
+              ${infoItem("COUNTRY", rec.ip_country, "amber")}
+              ${infoItem("TIMEZONE", rec.ip_timezone)}
+              ${infoItem("IP LAT/LON", fmtCoord(rec.ip_lat, rec.ip_lon))}
+              ${infoItem("GPS LAT", rec.geo_lat ? rec.geo_lat.toFixed(6) : "N/A", "cyan")}
+              ${infoItem("GPS LON", rec.geo_lon ? rec.geo_lon.toFixed(6) : "N/A", "cyan")}
+              ${infoItem("GPS ACCURACY", rec.geo_accuracy ? rec.geo_accuracy.toFixed(1) + "m" : "N/A")}
+              ${infoItem("OS", rec.os)}
+              ${infoItem("BROWSER", (rec.browser || "") + " " + (rec.browser_version || ""))}
+              ${infoItem("DEVICE", rec.device_type)}
+              ${infoItem("SCREEN", rec.screen_res)}
+              ${infoItem("LANGUAGE", rec.language)}
+              ${infoItem("PLATFORM", rec.platform)}
+              ${infoItem("TIMESTAMP", time)}
+            </div>
+            <div class="media-section" id="media-${rec.id}">
+              <div class="media-title">◆ CAPTURED MEDIA — click to expand to load</div>
+              <div class="loading" style="padding:1rem">Loading media…</div>
+            </div>
+          </div>
+        `;
+        content.appendChild(card);
+      });
+    }
+
+    function infoItem(label, value, cls = "") {
+      return `<div class="info-item"><div class="label">${label}</div><div class="value ${cls}">${value || "N/A"}</div></div>`;
+    }
+    function fmtCoord(lat, lon) {
+      if (lat && lon) return `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+      return "N/A";
+    }
+
+    // ── Load full detail (images + audio) on expand ──
+    const loadedDetails = new Set();
+    async function loadDetail(id, cardEl) {
+      if (loadedDetails.has(id)) return;
+      loadedDetails.add(id);
+
+      const mediaDiv = document.getElementById(`media-${id}`);
+      try {
+        const res = await fetch(`/api/admin/record/${id}?pass=${encodeURIComponent(adminPass)}`);
+        const data = await res.json();
+        if (!data.success) { mediaDiv.innerHTML = '<div class="no-media">Failed to load</div>'; return; }
+
+        const rec = data.record;
+        let html = '<div class="media-title">◆ CAPTURED MEDIA</div><div class="media-grid">';
+
+        if (rec.front_image) {
+          html += `<div><div class="label" style="font-size:0.5rem;color:#4a5568;margin-bottom:4px;letter-spacing:0.1em">FRONT_CAM</div><img src="${rec.front_image}" alt="Front" /></div>`;
+        }
+        if (rec.back_image) {
+          html += `<div><div class="label" style="font-size:0.5rem;color:#4a5568;margin-bottom:4px;letter-spacing:0.1em">REAR_CAM</div><img src="${rec.back_image}" alt="Rear" /></div>`;
+        }
+
+        if (!rec.front_image && !rec.back_image) {
+          html += '<div class="no-media">No camera captures</div>';
+        }
+
+        html += '</div>';
+
+        if (rec.audio_recording) {
+          html += `
+            <div style="margin-top:1rem">
+              <div class="label" style="font-size:0.5rem;color:#4a5568;margin-bottom:4px;letter-spacing:0.1em">VOICE RECORDING (10s)</div>
+              <audio controls src="${rec.audio_recording}" style="width:100%;max-width:400px;height:40px"></audio>
+            </div>`;
+        } else {
+          html += '<div class="no-media" style="margin-top:0.75rem">No audio recording</div>';
+        }
+
+        mediaDiv.innerHTML = html;
+      } catch {
+        mediaDiv.innerHTML = '<div class="no-media">Error loading media</div>';
+      }
+    }
+  </script>
+</body>
+</html>

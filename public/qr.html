@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS // Access QR Code</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #020408;
+      color: #e0e6f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none; z-index: 0;
+    }
+    .container {
+      position: relative; z-index: 1;
+      text-align: center;
+      max-width: 480px;
+      width: 100%;
+    }
+    .hex { color: #00e5ff; font-size: 2rem; filter: drop-shadow(0 0 10px rgba(0,229,255,0.5)); }
+    h1 {
+      font-size: 1.3rem; font-weight: 700; letter-spacing: 0.08em;
+      margin: 0.75rem 0 0.25rem;
+    }
+    h1 .dim { color: #4a5568; }
+    .subtitle { color: #8892a8; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    .qr-card {
+      margin: 2rem auto;
+      background: rgba(15,25,40,0.6);
+      border: 1px solid rgba(0,229,255,0.12);
+      border-radius: 8px;
+      padding: 2rem;
+      display: inline-block;
+    }
+    #qrCanvas img, #qrCanvas canvas {
+      display: block;
+      margin: 0 auto;
+      border-radius: 4px;
+    }
+    .url-display {
+      margin-top: 1.5rem;
+      padding: 0.65rem 1rem;
+      background: rgba(0,255,136,0.06);
+      border: 1px solid rgba(0,255,136,0.15);
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: #00ff88;
+      text-shadow: 0 0 8px rgba(0,255,136,0.2);
+      word-break: break-all;
+      letter-spacing: 0.04em;
+    }
+    .instructions {
+      margin-top: 1.5rem;
+      font-size: 0.7rem;
+      color: #4a5568;
+      letter-spacing: 0.06em;
+      line-height: 1.8;
+      text-transform: uppercase;
+    }
+    .instructions span { color: #ffb300; }
+    .pill {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.6rem;
+      padding: 3px 10px;
+      border-radius: 2px;
+      background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.15);
+      color: #00e5ff;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    a { color: #00e5ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hex">⬡</div>
+    <h1>NEXUS<span class="dim">//</span>ACCESS</h1>
+    <p class="subtitle">Scan to connect to the portal</p>
+
+    <div class="qr-card">
+      <div id="qrCanvas"></div>
+    </div>
+
+    <div class="url-display" id="urlDisplay">Loading…</div>
+
+    <div class="instructions">
+      <span>▸</span> Scan with any phone camera to open the portal<br/>
+      <span>▸</span> Both devices must be on the <span>same network</span><br/>
+      <span>▸</span> For external access, use <span>ngrok</span> instead
+    </div>
+
+    <div class="pill">NEXUS PORTAL v5.0.0</div>
+  </div>
+
+  <script>
+    // Build the URL using the current host (works for both LAN IP and ngrok)
+    const url = window.location.origin;
+    document.getElementById("urlDisplay").textContent = url;
+
+    // Generate QR code
+    const qr = qrcode(0, "M");
+    qr.addData(url);
+    qr.make();
+    document.getElementById("qrCanvas").innerHTML = qr.createSvgTag({
+      cellSize: 6,
+      margin: 4,
+      scalable: true,
+    });
+
+    // Style the SVG
+    const svg = document.querySelector("#qrCanvas svg");
+    if (svg) {
+      svg.style.width = "240px";
+      svg.style.height = "240px";
+      svg.style.display = "block";
+      svg.style.margin = "0 auto";
+      // Invert colors for dark theme — white QR on dark
+      svg.querySelectorAll("rect").forEach(r => {
+        const fill = r.getAttribute("fill");
+        if (fill === "#000000") r.setAttribute("fill", "#00ff88");
+        else if (fill === "#ffffff") r.setAttribute("fill", "#0a0e1a");
+      });
+    }
+  </script>
+</body>
+</html>

