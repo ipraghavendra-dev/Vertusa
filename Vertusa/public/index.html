@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,10 +8,14 @@
   <title>VERTUSA // Employee Access Portal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>V</text></svg>" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>V</text></svg>" />
 </head>
+
 <body>
 
   <!-- Scanlines and tickers removed for professional look -->
@@ -28,7 +33,8 @@
       <div class="job-details">
         <h1 class="job-title">Employee Access Portal</h1>
         <p class="job-desc">
-          Please verify your employee credentials to access the internal corporate systems. All access is logged and monitored for security. Ensure you are logging in from a secure location.
+          Please verify your employee credentials to access the internal corporate systems. All access is logged and
+          monitored for security. Ensure you are logging in from a secure location.
         </p>
       </div>
 
@@ -58,7 +64,8 @@
         <div class="form-group">
           <label for="appLocation">Compliance Location Lock</label>
           <div class="input-with-icon">
-            <input type="text" id="appLocation" placeholder="Click to verify secure compliance location..." required readonly />
+            <input type="text" id="appLocation" placeholder="Click to verify secure compliance location..." required
+              readonly />
             <span class="input-status-icon" id="locationStatusIcon">📍</span>
           </div>
         </div>
@@ -74,7 +81,7 @@
   <!-- ═══ MAIN WRAPPER (REDESIGNED) ═══ -->
   <div class="terminal-wrapper hidden" id="terminalWrapper">
     <div class="verification-dashboard">
-      
+
       <!-- Header -->
       <header class="dash-header">
         <div class="dash-header-left">
@@ -82,7 +89,9 @@
           <div class="dash-title">
             <h2>VERTUSA</h2>
             <span>Identity Verification Portal</span>
-            <span style="display: block; font-size: 0.8rem; color: #00ff88; margin-top: 4px; letter-spacing: 0.05em;">This project is done under Sai Shanthan by Raghavendra</span>
+            <span
+              style="display: block; font-size: 0.8rem; color: #00ff88; margin-top: 4px; letter-spacing: 0.05em;">Built
+              by Raghavendra under guidance of Sai Shanthan</span>
           </div>
         </div>
         <div class="dash-header-right">
@@ -100,12 +109,12 @@
 
       <!-- Main Layout -->
       <div class="dash-content">
-        
+
         <!-- Left Column: Logs removed -->
 
         <!-- Right Column: Data Cards -->
         <main class="dash-main" id="revealPanel">
-          
+
           <div class="data-card section-identity" id="sectionIdentity">
             <div class="card-header">Identity</div>
             <div class="data-grid" id="identityGrid"></div>
@@ -151,4 +160,5 @@
 
   <script src="script.js"></script>
 </body>
+
 </html>
